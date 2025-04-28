@@ -6,7 +6,8 @@ After figuring the server out (The port and access to the server)
     My goal here was to test on how do i send a POST request to the server, so my next step is to loop the POST request of PIN from 0 - 999
 
 2. I made 3 functions specifically for each steps to POST request.
-    FUNCTION 1- is where my message to the server are, it is encoded here to be sent to the server
+
+   FUNCTION 1- is where my message to the server are, it is encoded here to be sent to the server
     FUNCTION 2- this the where the connection is built between me and the server, this is where the socket library is used...
     FUNCTION 3- the main function that iterates from 0 to 999 or 999 to 0. The fucntion that sets up the communication between me and the server...
                 This is what prints the output in the terminal...
